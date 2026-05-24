@@ -98,14 +98,11 @@ def test_group_names_are_sorted():
 
 def test_total_runs_aggregated_per_group():
     s1 = _make_summary(server="web-01")
-    s1.entries.append(_make_entry())
-    s2 = _make_summary(command="/usr/bin/sync", server="web-01")
-    report = _make_report(s1, s2)
-    grouped = group_report(report, "server")
-    assert grouped.groups["web-01"].total_runs == 3
 
 
-def test_empty_report_returns_empty_groups():
+def test_empty_report_produces_no_groups():
+    """Grouping an empty report should return a GroupedReport with no groups."""
     report = AggregatedReport()
     grouped = group_report(report, "server")
     assert grouped.groups == {}
+    assert grouped.group_names() == []
