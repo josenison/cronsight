@@ -96,3 +96,19 @@ def test_rules_from_dict_raises_on_missing_pattern():
 def test_rules_from_dict_raises_on_empty_values():
     with pytest.raises(TaggingError):
         rules_from_dict([{"tag": "", "pattern": "backup"}])
+
+
+def test_rules_from_dict_raises_on_empty_pattern():
+    with pytest.raises(TaggingError):
+        rules_from_dict([{"tag": "backup", "pattern": ""}])
+
+
+def test_rules_from_dict_multiple_entries():
+    raw = [
+        {"tag": "backup", "pattern": "backup.sh"},
+        {"tag": "deploy", "pattern": "deploy.sh"},
+    ]
+    rules = rules_from_dict(raw)
+    assert len(rules) == 2
+    assert rules[1].tag == "deploy"
+    assert rules[1].pattern == "deploy.sh"
