@@ -45,6 +45,33 @@ def prev_run(expression: str, base: Optional[datetime] = None) -> datetime:
     return croniter(expression, base).get_prev(datetime)
 
 
+def next_runs(expression: str, count: int, base: Optional[datetime] = None) -> list[datetime]:
+    """Return the next *count* scheduled datetimes after *base* (defaults to now).
+
+    Parameters
+    ----------
+    expression:
+        A valid 5-field cron expression.
+    count:
+        Number of upcoming run times to return.  Must be a positive integer.
+    base:
+        The reference datetime; defaults to ``datetime.utcnow()``.
+
+    Raises
+    ------
+    ValueError
+        If *count* is not a positive integer.
+    ScheduleError
+        If *expression* is not a valid cron string.
+    """
+    if count < 1:
+        raise ValueError(f"count must be a positive integer, got {count!r}")
+    _validate_expression(expression)
+    base = base or datetime.utcnow()
+    it = croniter(expression, base)
+    return [it.get_next(datetime) for _ in range(count)]
+
+
 def schedule_info(
     expression: str,
     last_run: Optional[datetime] = None,
