@@ -36,6 +36,18 @@ class ScoredReport:
     def highest_score(self) -> Optional[ScoredJob]:
         return max(self.jobs, key=lambda j: j.score, default=None)
 
+    def below_threshold(self, threshold: float) -> List[ScoredJob]:
+        """Return all jobs whose score is strictly below *threshold*.
+
+        Useful for alerting on jobs that fall beneath an acceptable
+        reliability level (e.g. ``report.below_threshold(70.0)``).
+        """
+        if not 0.0 <= threshold <= 100.0:
+            raise ScorerError(
+                f"threshold must be between 0.0 and 100.0, got {threshold}"
+            )
+        return [j for j in self.jobs if j.score < threshold]
+
 
 def _success_rate(summary: JobSummary) -> float:
     if summary.total_runs == 0:
