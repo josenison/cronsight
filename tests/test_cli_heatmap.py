@@ -79,6 +79,17 @@ def test_handle_heatmap_job_filter_excludes_non_matching(capsys):
     assert "/bin/job" not in captured.out
 
 
+def test_handle_heatmap_job_filter_includes_matching(capsys):
+    """A job_filter matching the command should keep it in the output."""
+    args = _make_args(job_filter="/bin/job")
+    report = _make_report()
+    with patch("cronsight.cli_heatmap.load_snapshot", return_value=report):
+        result = handle_heatmap(args)
+    captured = capsys.readouterr()
+    assert "/bin/job" in captured.out
+    assert result == 0
+
+
 def test_handle_heatmap_returns_1_on_empty_report():
     args = _make_args()
     report = AggregatedReport(jobs={})
