@@ -32,14 +32,18 @@ def _success_rate(summary: JobSummary) -> float:
     return (summary.total_runs - summary.failed_runs) / summary.total_runs * 100
 
 
+def _rate_color(rate: float) -> str:
+    """Return the appropriate color code for a given success rate."""
+    if rate == 100.0:
+        return COLOR_GREEN
+    if rate >= 80.0:
+        return COLOR_YELLOW
+    return COLOR_RED
+
+
 def format_job_row(summary: JobSummary, use_color: bool = True) -> str:
     rate = _success_rate(summary)
-    if rate == 100.0:
-        rate_str = _colorize(f"{rate:5.1f}%", COLOR_GREEN, use_color)
-    elif rate >= 80.0:
-        rate_str = _colorize(f"{rate:5.1f}%", COLOR_YELLOW, use_color)
-    else:
-        rate_str = _colorize(f"{rate:5.1f}%", COLOR_RED, use_color)
+    rate_str = _colorize(f"{rate:5.1f}%", _rate_color(rate), use_color)
 
     cmd = summary.command[:40].ljust(40)
     server = summary.server.ljust(20)
