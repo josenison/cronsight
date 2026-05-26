@@ -49,6 +49,10 @@ class EscalationReport:
     def count(self) -> int:
         return len(self.escalated)
 
+    def by_label(self, label: str) -> List[EscalatedJob]:
+        """Return all escalated jobs matching the given *label*."""
+        return [job for job in self.escalated if job.label == label]
+
 
 def _consecutive_failures(summary: JobSummary) -> int:
     """Count trailing failures in chronological order."""
@@ -68,7 +72,11 @@ def escalate_report(
     report: AggregatedReport,
     rules: List[EscalationRule],
 ) -> EscalationReport:
-    """Evaluate *rules* against every job in *report*."""
+    """Evaluate *rules* against every job in *report*.
+
+    Rules are checked from highest threshold to lowest so that each job
+    is assigned the most severe matching label only.
+    """
     if not rules:
         raise EscalatorError("at least one EscalationRule is required")
 
