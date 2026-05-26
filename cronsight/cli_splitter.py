@@ -32,6 +32,12 @@ def _add_splitter_subparser(subparsers: argparse._SubParsersAction) -> None:  # 
 
 
 def _print_split(result: SplitReport, min_runs: int) -> None:
+    """Print a formatted table of split windows to stdout.
+
+    Args:
+        result:   The SplitReport produced by split_report().
+        min_runs: Filter out windows whose total_runs is below this threshold.
+    """
     visible = [w for w in result.windows if w.total_runs >= min_runs]
     if not visible:
         print("No windows match the given criteria.")
@@ -48,6 +54,11 @@ def _print_split(result: SplitReport, min_runs: int) -> None:
 
 
 def handle_splitter(args: argparse.Namespace) -> int:
+    """Entry point for the 'split' sub-command.
+
+    Loads a snapshot from disk, splits it into time-based windows, and
+    prints a summary table.  Returns an exit code suitable for sys.exit().
+    """
     try:
         report = load_snapshot(args.snapshot)
     except SnapshotError as exc:
