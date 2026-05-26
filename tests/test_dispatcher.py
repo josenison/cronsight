@@ -96,3 +96,10 @@ def test_dispatch_info_channel_receives_all():
     results = dispatch(alerts, channels)
     assert results[0].alerts_sent == 3
     assert results[0].skipped == 0
+
+
+def test_dispatch_no_alerts_raises():
+    """dispatch() should raise DispatcherError when the alerts list is empty."""
+    channels = [DispatchChannel("ch", "stdout", "info")]
+    with pytest.raises(DispatcherError):
+        dispatch([], channels)
